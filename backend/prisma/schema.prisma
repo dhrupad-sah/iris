@@ -1,0 +1,138 @@
+// Project Iris Database Schema
+// Story-centric journalism workbench
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  stories   Story[]
+  
+  @@map("users")
+}
+
+// Stories table - the core entity
+model Story {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  state       StoryState @default(LEAD)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  files       File[]
+  tags        Tag[]
+  annotations Annotation[]
+  
+  @@map("stories")
+}
+
+// Story states enum
+enum StoryState {
+  LEAD        // Initial idea, minimal content
+  RESEARCH    // Gathering evidence, interviews
+  ANALYSIS    // Finding connections, building narrative
+  WRITING     // Drafting the story
+  PUBLISHED   // Final piece completed
+}
+
+// Files table - documents, audio, etc.
+model File {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  fileType    FileType
+  fileSize    Int
+  mimeType    String
+  filePath    String
+  
+  // Processed content
+  extractedText String?
+  transcription String?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  storyId     String
+  story       Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  
+  annotations Annotation[]
+  
+  @@map("files")
+}
+
+// File types enum
+enum FileType {
+  DOCUMENT    // PDF, DOCX, TXT
+  AUDIO       // MP3, WAV, M4A
+  IMAGE       // JPG, PNG
+  VIDEO       // MP4, MOV
+  WEB_CLIP    // Saved web content
+  NOTE        // Plain text notes
+}
+
+// Tags table - for organizing content
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?
+  createdAt DateTime @default(now())
+  
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  
+  annotations Annotation[]
+  
+  @@unique([name, storyId])
+  @@map("tags")
+}
+
+// Annotations table - highlights, notes, etc.
+model Annotation {
+  id        String   @id @default(cuid())
+  type      AnnotationType
+  content   String
+  
+  // For text selection
+  startOffset Int?
+  endOffset   Int?
+  selectedText String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  
+  fileId    String?
+  file      File?    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  
+  tags      Tag[]
+  
+  @@map("annotations")
+}
+
+// Annotation types enum
+enum AnnotationType {
+  HIGHLIGHT   // Text highlight
+  NOTE        // Text note/comment
+  BOOKMARK    // Important marker
+  QUOTE       // Potential quote for story
+  EVIDENCE    // Key evidence
+  FOLLOW_UP   // Follow-up needed
+}
