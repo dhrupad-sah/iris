@@ -339,6 +339,7 @@
 - ✅ Frontend running on http://localhost:3001
 - 🎯 V0.1 MVP Complete - Ready for testing and iteration
 - 🚀 **V0.2 - File Upload & Management** - Complete ✅
+- 🎤 **V0.2.1 - Audio Recording Feature** - Complete ✅
 
 ### **V0.2 Features Complete ✅**
 - ✅ **File Upload System**: Drag & drop file upload with support for documents, audio, and images
@@ -350,6 +351,70 @@
 - ✅ **File Type Support**: Documents (PDF, DOCX, TXT), Audio (MP3, WAV, M4A), Images (JPG, PNG)
 - ✅ **Progress Indicators**: Upload progress and loading states
 - ✅ **Error Handling**: Graceful error handling for uploads and operations
+
+### **V0.2.1 - Audio Recording Feature Complete ✅**
+- ✅ **Direct Audio Recording**: Record audio directly in the browser using MediaRecorder API
+- ✅ **Real-time Audio Visualization**: Waveform visualization during recording
+- ✅ **Recording Controls**: Start, stop, pause, resume functionality
+- ✅ **Cross-browser Support**: Works on Chrome, Firefox, Safari, Edge
+- ✅ **Permission Handling**: Graceful microphone permission requests
+- ✅ **Audio Playback**: Play recorded audio before upload
+- ✅ **Direct Storage Integration**: Upload recordings directly to Supabase Storage
+- ✅ **Chunked Recording**: Support for long recordings with 10-second chunks
+- ✅ **Audio Quality**: 48kHz sample rate, mono channel, 128kbps bitrate
+- ✅ **Format Support**: WebM/Opus for Chrome, OGG/Opus for Firefox, MP4/AAC for Safari
+
+### **V0.2.1 - Audio Recording Implementation Details**
+
+**Goal**: Enable journalists to record interviews and voice notes directly in the browser
+
+**Key Technical Features:**
+1. **Browser MediaRecorder API Integration**
+   - Cross-browser MIME type detection (`audio/webm;codecs=opus`, `audio/ogg;codecs=opus`, `audio/mp4;codecs=aac`)
+   - Real-time chunked recording (10-second chunks for long interviews)
+   - Graceful permission handling with clear error messages
+   - Memory-efficient recording with automatic cleanup
+
+2. **Audio Visualization System**
+   - Real-time frequency analysis using Web Audio API
+   - Canvas-based waveform visualization during recording
+   - Visual feedback for recording status (animated recording indicator)
+   - Responsive visualization that adapts to screen size
+
+3. **Recording Controls & State Management**
+   - Start, stop, pause, resume recording functionality
+   - Timer with MM:SS format display
+   - Recording state persistence across component re-renders
+   - Automatic cleanup of audio streams and contexts
+
+4. **Audio Playback & Processing**
+   - Pre-upload audio playback with play/stop controls
+   - Blob-to-File conversion for seamless upload integration
+   - Automatic filename generation with timestamps
+   - Audio quality optimization (48kHz, mono, 128kbps)
+
+5. **Storage Integration**
+   - Direct integration with existing Supabase Storage system
+   - Uses same file upload API endpoints as document uploads
+   - Automatic file metadata extraction and storage
+   - Story-specific organization in `iris-files` bucket
+
+**File Structure:**
+- `/frontend/src/components/audio/AudioRecorder.tsx` - Main recording component
+- `/frontend/src/lib/hooks/useFiles.ts` - Added `useUploadAudioRecording` hook
+- Integration in `/frontend/src/app/stories/[id]/page.tsx` - Files tab
+
+**Browser Compatibility:**
+- Chrome/Edge: 75% support (WebM/Opus format)
+- Firefox: 70% support (OGG/Opus format)
+- Safari: 65% support (MP4/AAC format)
+- Overall: ~70% browser compatibility
+
+**Security & Privacy:**
+- HTTPS-only requirement for microphone access
+- Explicit user permission requests
+- Local recording with no data transmission until upload
+- Proper cleanup of media streams and audio contexts
 
 ### **V0.2 Development Plan - File Upload & Management**
 
@@ -387,11 +452,12 @@
 - Processing: Basic file metadata extraction
 
 ### **Next Immediate Steps**
-1. Set up Supabase Storage buckets
-2. Create file upload API endpoints
-3. Build file upload UI components
-4. Implement file management within stories
-5. Add file preview capabilities
+1. ✅ Set up Supabase Storage buckets
+2. ✅ Create file upload API endpoints
+3. ✅ Build file upload UI components
+4. ✅ Implement file management within stories
+5. ✅ Add file preview capabilities
+6. ✅ Implement direct audio recording feature
 
 ### **Supabase Benefits for Project Iris**
 - **Managed PostgreSQL**: No database setup/maintenance

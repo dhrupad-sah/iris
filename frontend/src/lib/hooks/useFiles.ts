@@ -88,3 +88,24 @@ export function useUpdateFile() {
     },
   })
 }
+
+// Upload audio recording mutation (same as upload files but with specific naming)
+export function useUploadAudioRecording() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ storyId, files }: { storyId: string; files: FileList }) =>
+      apiClient.uploadFiles(storyId, files),
+    onSuccess: (data, variables) => {
+      // Invalidate story files query
+      queryClient.invalidateQueries({ 
+        queryKey: fileKeys.storyFiles(variables.storyId) 
+      })
+      
+      // Update individual file queries
+      data.files.forEach(file => {
+        queryClient.setQueryData(fileKeys.detail(file.id), file)
+      })
+    },
+  })
+}

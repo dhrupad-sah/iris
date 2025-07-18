@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useStory } from '@/lib/hooks/useStories'
 import { FileUpload } from '@/components/files/FileUpload'
 import { FileList } from '@/components/files/FileList'
+import { AudioRecorder } from '@/components/audio/AudioRecorder'
 import { Badge } from '@/components/ui/badge'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -180,6 +181,11 @@ export default function StoryDetailPage() {
 
         {activeTab === 'files' && (
           <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Audio Recording</h2>
+              <AudioRecorder storyId={storyId} />
+            </div>
+            
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Upload Files</h2>
               <FileUpload storyId={storyId} />
